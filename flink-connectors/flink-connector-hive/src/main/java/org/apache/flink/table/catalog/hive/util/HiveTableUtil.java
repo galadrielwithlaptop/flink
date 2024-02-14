@@ -513,12 +513,22 @@ public class HiveTableUtil {
                 CatalogTable catalogTable = (CatalogTable) table;
 
                 if (catalogTable.isPartitioned()) {
-                    int partitionKeySize = catalogTable.getPartitionKeys().size();
-                    List<FieldSchema> regularColumns =
-                            allColumns.subList(0, allColumns.size() - partitionKeySize);
-                    List<FieldSchema> partitionColumns =
-                            allColumns.subList(
-                                    allColumns.size() - partitionKeySize, allColumns.size());
+//                    int partitionKeySize = catalogTable.getPartitionKeys().size();
+                    List<FieldSchema> regularColumns = new ArrayList<>();
+                    List<FieldSchema> partitionColumns = new ArrayList<>();
+                    for (FieldSchema col : allColumns) {
+                        if (catalogTable.getPartitionKeys().contains(col.getName())) {
+                            partitionColumns.add(col);
+                        }
+                        else {
+                            regularColumns.add(col);
+                        }
+                    }
+//                    List<FieldSchema> regularColumns =
+//                            allColumns.subList(0, allColumns.size() - partitionKeySize);
+//                    List<FieldSchema> partitionColumns =
+//                            allColumns.subList(
+//                                    allColumns.size() - partitionKeySize, allColumns.size());
 
                     sd.setCols(regularColumns);
                     hiveTable.setPartitionKeys(partitionColumns);
